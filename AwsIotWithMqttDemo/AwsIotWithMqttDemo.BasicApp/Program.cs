@@ -29,7 +29,7 @@ namespace AwsIotWithMqttDemo.BasicApp
             // Create a new MQTT client.
             var client = new MqttClient(broker, port, true, caCert, deviceCert, MqttSslProtocols.TLSv1_2);
 
-            //Event wiring
+            //Event Handler Wiring
             client.MqttMsgPublishReceived += Client_MqttMsgPublishReceived;
             client.MqttMsgSubscribed += Client_MqttMsgSubscribed;
 
@@ -53,12 +53,8 @@ namespace AwsIotWithMqttDemo.BasicApp
             string topic = "topic_1";
             client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
 
-
-
-
             Console.WriteLine($"Press any key to exit!");
             Console.ReadLine();
-
         }
 
         private static void Client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e)
