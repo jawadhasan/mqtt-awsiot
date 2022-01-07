@@ -12,10 +12,12 @@ namespace AwsIotWithMqttDemo.BasicApp
     {
         static void Main(string[] args)
         {
+
+            #region AWS Setup
             var broker = "a2upl3efg7dvex-ats.iot.eu-central-1.amazonaws.com"; //<AWS-IoT-Endpoint>           
             var port = 8883;
             var clientId = "TestDeviceWeb";
-            var certPass = "<enterPassword>";
+            var certPass = "yourpasswordhere";
 
             //certificates Path
             var certificatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "certs");
@@ -32,11 +34,26 @@ namespace AwsIotWithMqttDemo.BasicApp
             //Event Handler Wiring
             client.MqttMsgPublishReceived += Client_MqttMsgPublishReceived;
             client.MqttMsgSubscribed += Client_MqttMsgSubscribed;
+            #endregion
 
             //Connect
             client.Connect(clientId);
             Console.WriteLine($"Connected to AWS IoT with client id: {clientId}.");
 
+            //uncomment following code for basic example
+            //Example1()
+
+            //simulator code
+            var simulator = new Simulator();
+            simulator.PublishToAWSIoT(client);
+
+            Console.WriteLine($"Press any key to exit!");
+            Console.ReadLine();
+        }
+
+
+        public static void Example1(MqttClient client)
+        {
             //send Messages
             var message = "Hello from .NET Core";
             int i = 1;
@@ -52,16 +69,11 @@ namespace AwsIotWithMqttDemo.BasicApp
             //subscribig to topic
             string topic = "topic_1";
             client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
-
-            Console.WriteLine($"Press any key to exit!");
-            Console.ReadLine();
         }
-
         private static void Client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e)
         {
             Console.WriteLine($"Successfully subscribed to the AWS IoT topic.");
         }
-
         private static void Client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
             Console.WriteLine("Message received: " + Encoding.UTF8.GetString(e.Message));
